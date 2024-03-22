@@ -10,27 +10,27 @@
 
 const places__list = document.querySelector(".places__list");
 const addButton = document.querySelector(".profile__add-button");
-const popUp = document.querySelector(".popup_type_new-card");
-
-function addCard(nameValue, linkValue) {
-  const template = document.querySelector("#card-template").content;
-  const templateCopy = template.querySelector(".card").cloneNode(true);
-  const resetButton = templateCopy.querySelector(".card__delete-button");
-
-  templateCopy.querySelector(".card__image").src = linkValue;
-  templateCopy.querySelector(".card__title").textContent = nameValue;
-
-  places__list.append(templateCopy);
-
-  resetButton.addEventListener("click", function () {
-    delElement(templateCopy);
-  });
-}
-
-for (i = 0; i < initialCards.length; i++) {
-  addCard(initialCards[i].name, initialCards[i].link);
-}
 
 function delElement(element) {
   element.remove();
 }
+
+function createCard(nameValue, linkValue) {
+  const template = document.querySelector("#card-template").content;
+  const cardElement = template.querySelector(".card").cloneNode(true);
+  const deleteButton = cardElement.querySelector(".card__delete-button");
+
+  cardElement.querySelector(".card__image").src = linkValue;
+  cardElement.querySelector(".card__title").textContent = nameValue;
+
+  deleteButton.addEventListener("click", function () {
+    delElement(cardElement);
+  });
+
+  return cardElement;
+}
+
+initialCards.forEach((cardData) => {
+  const cardElement = createCard(cardData.name, cardData.link);
+  places__list.append(cardElement);
+});
