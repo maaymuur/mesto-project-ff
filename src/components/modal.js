@@ -97,7 +97,7 @@ export function addCardNew(evt, placesList) {
 
   placesList.insertBefore(newCardElement, placesList.firstChild);
 
-  nameInputCard.value = "";   ё
+  nameInputCard.value = "";   
   descInputCard.value = "";
 
   closeModal(addCard);
