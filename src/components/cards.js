@@ -22,28 +22,29 @@ export const initialCards = [
   {
     name: "Байкал",
     link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
-  }
+  },
 ];
 
-export const places__list = document.querySelector(".places__list");
-
 export function delElement(element) {
-element.remove();
+  element.remove();
 }
 
-export function createCard(nameValue, linkValue) {
-const template = document.querySelector("#card-template").content;
-const cardElement = template.querySelector(".card").cloneNode(true);
-const deleteButton = cardElement.querySelector(".card__delete-button");
-
-cardElement.querySelector(".card__image").src = linkValue;
-cardElement.querySelector(".card__title").textContent = nameValue;
-
-deleteButton.addEventListener("click", function () {
-  delElement(cardElement);
-});
-
-return cardElement;
+export function likeBtn(likeButton) {
+  likeButton.classList.toggle("card__like-button_is-active");
 }
 
+export function createCard(nameValue, linkValue, likeHandler, openHandler, delHandler) {
+  const template = document.querySelector("#card-template").content;
+  const cardElement = template.querySelector(".card").cloneNode(true);
+  const deleteButton = cardElement.querySelector(".card__delete-button");
+  const likeButton = cardElement.querySelector(".card__like-button");
 
+  cardElement.querySelector(".card__image").src = linkValue;
+  cardElement.querySelector(".card__title").textContent = nameValue;
+
+
+  likeButton.addEventListener("click", () => likeHandler(likeButton));
+  deleteButton.addEventListener("click", () => delHandler(cardElement));
+
+  return cardElement;
+}
