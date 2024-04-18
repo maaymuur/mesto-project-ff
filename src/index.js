@@ -1,19 +1,14 @@
-import {
-  createCard,
-  delElement,
-  initialCards,
-  likeBtn,
-} from "./components/cards.js";
+import { initialCards } from "./components/cards.js";
 
 import {
-  addCard,
   clickOutsideHandler,
   closeModal,
   keyClickClose,
   openModal,
-  formCard,
 } from "./components/modal.js";
 import "./index.css";
+
+import { createCard, likeBtn, delElement } from "./components/card.js";
 
 const addButton = document.querySelector(".profile__add-button");
 const editBtn = document.querySelector(".profile__edit-button");
@@ -22,38 +17,14 @@ const placesList = document.querySelector(".places__list");
 const popUpImg = document.querySelector(".popup__image");
 const editPopUp = document.querySelector(".popup_type_edit");
 const popImg = document.querySelector(".popup_type_image");
+const addCard = document.querySelector(".popup_type_new-card");
+const formCard = document.querySelector(".popup_type_new-card .popup__form");
 
 const nameInputCard = document.querySelector(".popup__input_type_card-name");
 const descInputCard = document.querySelector(".popup__input_type_url");
 
 formCard.addEventListener("submit", (evt) => addCardNew(evt, placesList));
 // formCard.addEventListener("submit", addCardNew);
-
-//СОЗДАНИЕ КАРТОЧЕК
-initialCards.forEach((cardData) => {
-  const cardElement = createCard(
-    cardData.name,
-    cardData.link,
-    likeBtn,
-    openCard,
-    delElement
-  );
-
-  placesList.append(cardElement);
-});
-
-placesList.addEventListener("click", openCard);
-
-function openCard(evt) {
-  if (evt.target.classList.contains("card__image")) {
-    const cardImg = evt.target;
-    const imgDesp =
-      cardImg.parentElement.querySelector(".card__title").textContent;
-    popUpImg.src = cardImg.src;
-    popCaption.textContent = imgDesp;
-    openModal(popImg);
-  }
-}
 
 //ОБРАБОТЧИК ОТКРЫТИЯ ПОПАПА РЕДАКТИРОВАНИЯ С ДАННЫМИ
 document.addEventListener("click", function (event) {
@@ -90,9 +61,6 @@ popEditClose.addEventListener("click", () => {
 //СЛУШАТЕЛЬ ФУНКЦИИ ЗАКРЫТИЯ ПОПАПОВ ПРИ КЛИКЕ НА ФОН
 document.addEventListener("click", clickOutsideHandler);
 
-// СЛУШАТЕЛЬ ЗАКРЫТИЯ ПОПАПА КЛИКОМ НА ESCAPE
-document.addEventListener("keydown", keyClickClose);
-
 //ЗАКРЫТИЕ КАРТИНКИ ПО КРЕСТИКУ
 const imgClose = document.querySelector(".popup_type_image .popup__close");
 
@@ -123,7 +91,8 @@ function handleFormProfileSubmit(evt) {
 
 formProfleElement.addEventListener("submit", handleFormProfileSubmit);
 
-export function addCardNew(evt, placesList) {
+//Добавление новой карточки
+function addCardNew(evt, placesList) {
   evt.preventDefault();
   const newCard = {
     name: nameInputCard.value,
@@ -134,8 +103,8 @@ export function addCardNew(evt, placesList) {
     newCard.name,
     newCard.link,
     likeBtn,
-    openCard,
-    delElement
+    delElement,
+    openCard
   );
 
   placesList.insertBefore(newCardElement, placesList.firstChild);
@@ -145,3 +114,26 @@ export function addCardNew(evt, placesList) {
 
   closeModal(addCard);
 }
+
+//ОТКРЫТИЕ КАРТОЧЕК
+export function openCard(evt) {
+  const cardImg = evt.target;
+  const imgDesp =
+    cardImg.parentElement.querySelector(".card__title").textContent;
+  popUpImg.src = cardImg.src;
+  popUpImg.alt = imgDesp;
+  popCaption.textContent = imgDesp;
+  openModal(popImg);
+}
+
+//СОЗДАНИЕ КАРТОЧЕК
+initialCards.forEach((cardData) => {
+  const cardElement = createCard(
+    cardData.name,
+    cardData.link,
+    likeBtn,
+    delElement,
+    openCard
+  );
+  placesList.append(cardElement);
+});

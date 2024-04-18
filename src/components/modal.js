@@ -1,9 +1,3 @@
-export const addCard = document.querySelector(".popup_type_new-card");
-export const popCaption = document.querySelector(".popup__caption");
-export const formCard = document.querySelector(
-  ".popup_type_new-card .popup__form"
-);
-
 //ФУНКЦИЯ ЗАКРЫТИЯ ПОПАПОВ
 export function closeModal(evt) {
   evt.classList.remove("popup_is-opened");
