@@ -1,0 +1,11 @@
+.form__submit_inactive{
+    background-color: transparent;
+    color: rgb(154, 154, 154);
+    border: solid 1px rgb(154, 154, 154);
+}
+
+.form__submit_inactive:hover{
+    background-color: rgba(0, 0, 0, 0.764);
+    color: white;
+    border: none;
+}

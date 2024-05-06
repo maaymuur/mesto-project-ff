@@ -4,11 +4,14 @@ import {
   clickOutsideHandler,
   closeModal,
   keyClickClose,
-  openModal,
+  openModal
 } from "./components/modal.js";
 import "./index.css";
 
+import {enableValidation} from "./components/validation.js";
+
 import { createCard, likeBtn, delElement } from "./components/card.js";
+import { data } from "autoprefixer";
 
 const addButton = document.querySelector(".profile__add-button");
 const editBtn = document.querySelector(".profile__edit-button");
@@ -19,6 +22,7 @@ const editPopUp = document.querySelector(".popup_type_edit");
 const popImg = document.querySelector(".popup_type_image");
 const addCard = document.querySelector(".popup_type_new-card");
 const formCard = document.querySelector(".popup_type_new-card .popup__form");
+
 
 const nameInputCard = document.querySelector(".popup__input_type_card-name");
 const descInputCard = document.querySelector(".popup__input_type_url");
@@ -39,6 +43,8 @@ document.addEventListener("click", function (event) {
     descriptionInput.value = descriptionElement.textContent;
   }
 });
+
+
 
 const popAddClose = document.querySelector(
   ".popup_type_new-card .popup__close"
@@ -91,20 +97,39 @@ function handleFormProfileSubmit(evt) {
 
 formProfleElement.addEventListener("submit", handleFormProfileSubmit);
 
+const newCard = (name, link) => {
+  fetch('https://nomoreparties.co/v1/wff-cohort-12/cards', {
+    method:'POST',
+    headers: {
+      authorization: 'e5e5de72-de46-4c51-be74-1878519f8c80',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: name,
+      link: link
+    })
+  })
+  .then(handleResponse)
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error('Error fetching data:', error);
+  });
+}
+
 //Добавление новой карточки
 function addCardNew(evt, placesList) {
   evt.preventDefault();
-  const newCard = {
-    name: nameInputCard.value,
-    link: descInputCard.value,
-  };
+  newCard(nameInputCard.value, descInputCard.value)
 
   const newCardElement = createCard(
-    newCard.name,
-    newCard.link,
+    nameInputCard.value,
+    descInputCard.value,
     likeBtn,
     delElement,
-    openCard
+    openCard,
+    cardId
   );
 
   placesList.insertBefore(newCardElement, placesList.firstChild);
@@ -126,14 +151,122 @@ export function openCard(evt) {
   openModal(popImg);
 }
 
-//СОЗДАНИЕ КАРТОЧЕК
-initialCards.forEach((cardData) => {
-  const cardElement = createCard(
-    cardData.name,
-    cardData.link,
-    likeBtn,
-    delElement,
-    openCard
-  );
-  placesList.append(cardElement);
-});
+//ВЫЗЫВАЕМ ФУНКЦИЮ ДОБАВЛЕНИЯ ОШИБКИ К ФОРМАМ
+enableValidation();
+
+
+
+const handleResponse = (response) => {
+  console.log(response)
+  return response.json();
+};
+
+const updateUserInfo = (userData) => {
+  const { name, about, avatar } = userData;
+  document.querySelector('.profile__title').textContent = name;
+  document.querySelector('.profile__description').textContent = about;
+  document.querySelector('.profile__image').style.backgroundImage = avatar;
+};
+
+
+const getData = () => {
+  fetch('https://nomoreparties.co/v1/wff-cohort-12/users/me', {
+    method: 'GET',
+    headers: {
+      authorization: 'e5e5de72-de46-4c51-be74-1878519f8c80',
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(handleResponse)
+
+  .then((data) => {
+    updateUserInfo(data);
+  })
+  .catch((error) => {
+    console.error('Error fetching data:', error);
+  });
+};
+
+getData();
+
+
+const updateCards = (cardsData) => {
+  const cardsContainer = document.querySelector('.places__list');
+
+  cardsData.forEach(card => {
+    const { name, link, likes, _id } = card;
+    const cardElement = createCard(name, link, likeBtn, delElement, openCard, likes, _id);
+    cardsContainer.appendChild(cardElement);
+  });
+};
+
+
+
+
+export const getCards = () => {
+  fetch ('https://nomoreparties.co/v1/wff-cohort-12/cards ',{
+    method: 'GET',
+    headers: {
+      authorization: 'e5e5de72-de46-4c51-be74-1878519f8c80',
+      'Content-Type': 'application/json'
+    }
+  })
+
+  .then(handleResponse)
+  .then((data) => {
+    updateCards(data);
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error('Error fetching data:', error);
+  });
+}
+
+getCards();
+
+const editProfile = () =>{
+  fetch('https://nomoreparties.co/v1/wff-cohort-12/users/me',{
+  method: 'PATCH',
+  headers: {
+    authorization: 'e5e5de72-de46-4c51-be74-1878519f8c80',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Mario',
+    about: 'Kekovich'
+  })
+})
+
+.then(handleResponse)
+  .then((data) => {
+    updateUserInfo(data);
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error('Error fetching data:', error);
+  });
+}
+
+editProfile();
+
+
+
+//РЕДАКТИРОВАНИЕ АВАТАРА
+const avatarEdit = () =>{
+  fetch('https://nomoreparties.co/v1/wff-cohort-12/users/me',{
+  method:'PATCH',
+  headers:{
+    authorization: 'e5e5de72-de46-4c51-be74-1878519f8c80',
+    'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      avatar:avatar,
+    })
+
+    .then(handleResponse)
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error('Error fetching data:', error);
+  })
+})}

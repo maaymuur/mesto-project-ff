@@ -1,3 +1,5 @@
+import { hideError } from "./validation";
+
 //ФУНКЦИЯ ЗАКРЫТИЯ ПОПАПОВ
 export function closeModal(evt) {
   evt.classList.remove("popup_is-opened");
@@ -7,6 +9,13 @@ export function closeModal(evt) {
 // ФУНКЦИЯ ОТКРЫТИЯ ПОПАПОВ
 export function openModal(popup) {
   popup.classList.add("popup_is-opened");
+  const formList = Array.from(document.querySelectorAll(".popup__form"));
+  formList.forEach((form) => {
+    const inputList = Array.from(form.querySelectorAll(".popup__input"));
+    inputList.forEach((input) => {
+      hideError(form, input);
+    });
+  });
   addEscapeEventListener();
 }
 
@@ -34,3 +43,4 @@ export function addEscapeEventListener() {
 export function removeEscapeEventListener() {
   document.removeEventListener("keydown", keyClickClose);
 }
+
