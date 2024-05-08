@@ -271,7 +271,7 @@ const updateUserInfo = (userData) => {
   const { name, about, avatar } = userData;
   document.querySelector(".profile__title").textContent = name;
   document.querySelector(".profile__description").textContent = about;
-  document.querySelector(".profile__image").src= avatar;
+  document.querySelector('.profile__image').style["background-image"]= `url("${avatar}")`;
 };
 
 // Обработчик события отправки формы редактирования профиля
