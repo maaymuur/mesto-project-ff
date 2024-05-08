@@ -30,7 +30,7 @@
           <div class="profile__info">
             <h1 class="profile__title">Жак-Ив Кусто</h1>
             <button
-              class="profile__edit-button"
+              class="profile__edit-button"s
               aria-label="edit-button"
               type="button"
             ></button>
@@ -124,6 +124,17 @@
           <button type="button" class="popup__close"></button>
           <img src="" alt="" class="popup__image" />
           <p class="popup__caption"></p>
+        </div>
+      </div>
+      <div class="popup popup_type_update_avatar popup_is-animated">
+        <div class="popup__content">
+          <button type="button" class="popup__close"></button>
+          <h3 class="popup__title">Обновить аватар</h3>
+          <form class="popup__form" name="update-avatar">
+            <input id="avatar-url" type="url" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" required>
+            <span class="avatar-url-error form__input-error"></span>
+            <button type="submit" class="button popup__button">Сохранить</button>
+          </form>
         </div>
       </div>
     </div>

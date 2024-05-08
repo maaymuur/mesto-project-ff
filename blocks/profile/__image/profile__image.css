@@ -7,6 +7,27 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  cursor: pointer;
+}
+
+.profile__image:hover {
+  cursor: pointer;
+}
+
+.profile__image:hover::before {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background-image: url("../../../images/edit-icon.svg"),
+  linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8));
+  background-repeat: no-repeat, no-repeat;
+  background-position: center;
+  background-size: 26px 26px, 100% 100%;
+}
+
+.profile__image.clicked:hover {
+  opacity: 0;
 }
 
 
