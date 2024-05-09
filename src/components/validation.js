@@ -1,9 +1,9 @@
 //ПОКАЗАТЬ ОШИБКУ
-export const showError = (form, input, errorMes) => {
+export const showError = (form, input, errorMes, settings) => {
   const formError = form.querySelector(`.${input.id}-error`);
-  input.classList.add("form__input_type_error");
+  input.classList.add(settings.inputErrorClass);
   formError.textContent = errorMes;
-  formError.classList.add("form__input-error_active");
+  formError.classList.add(settings.errorClass);
 };
 
 //СКРЫТЬ ОШИБКУ
@@ -15,14 +15,14 @@ export const hideError = (form, input) => {
 };
 
 //ПРОВЕРКА ВАЛИДНОСТИ ОШИБКИ
-export const isValid = (form, input) => {
+export const isValid = (form, input, settings) => {
   if (input.validity.patternMismatch) {
     input.setCustomValidity(input.dataset.errorMessage);
   } else {
     input.setCustomValidity("");
   }
   if (!input.validity.valid) {
-    showError(form, input, input.validationMessage);
+    showError(form, input, input.validationMessage, settings);
   } else {
     hideError(form, input);
   }
@@ -52,7 +52,7 @@ export const setEventListeners = (
 
 //ДОБАВЛЯЕМ ОШИБКУ К ФОРМАМ
 export const enableValidation = (settings) => {
-  if (!settings) return; // Добавляем проверку на наличие настроек
+  if (!settings) return; // Проверка на наличие настроек
 
   const {
     formSelector,
@@ -92,8 +92,8 @@ export const toggleButtonState = (inputList, buttonElement) => {
   }
 };
 
-export // Функция для очистки ошибок валидации и делает кнопку неактивной
-function clearValidation(formElement, settings) {
+ // Функция для очистки ошибок валидации и делает кнопку неактивной
+ export function clearValidation(formElement, settings) {
   const inputList = Array.from(
     formElement.querySelectorAll(settings.inputSelector)
   );

@@ -1,5 +1,3 @@
-import { updateUserInfo } from "../index.js";
-
 const config = {
   baseUrl: "https://nomoreparties.co/v1/wff-cohort-12",
   headers: {
@@ -9,9 +7,12 @@ const config = {
 };
 
 export const handleResponse = (response) => {
-  return response.json();
+  if (response.ok) {
+    return response.json();
+  } else {
+    return Promise.reject(`Ошибка ${response.status}`);
+  }
 };
-
 // Функция для добавления новой карточки
 export const newCard = (name, link) => {
   return fetch(`${config.baseUrl}/cards`, {
@@ -21,12 +22,7 @@ export const newCard = (name, link) => {
       name: name,
       link: link,
     }),
-  })
-    .then(handleResponse)
-    .catch((error) => {
-      console.error("Ошибка при добавлении новой карточки:", error);
-      throw error;
-    });
+  }).then(handleResponse);
 };
 
 // Функция для редактирования профиля
@@ -35,12 +31,7 @@ export const editProfile = (userData) => {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify(userData),
-  })
-    .then(handleResponse)
-    .catch((error) => {
-      console.error("Ошибка при обновлении профиля:", error);
-      throw error;
-    });
+  }).then(handleResponse);
 };
 
 // Функция для обновления аватара
@@ -52,47 +43,33 @@ export function updateAvatarOnServer(avatar) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ avatar: avatar }),
-  })
-    .then(handleResponse)
-    .catch((error) => {
-      console.error("Ошибка при обновлении аватара:", error);
-      throw error;
-    });
+  }).then(handleResponse);
 }
 
 export const getData = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "GET",
     headers: config.headers,
-  })
-    .then(handleResponse)
-    .then((data) => {
-      updateUserInfo(data); // Обновляю информацию о пользователе
-      console.log(data);
-    })
-    .catch((error) => {
-      console.error("Ошибка при получении данных:", error);
-    });
+  }).then(handleResponse);
 };
 
 export const deleteCardOnServer = (_id) => {
-  return fetch(`https://nomoreparties.co/v1/wff-cohort-12/cards/${_id}`, {
+  return fetch(`${config.baseUrl}/cards/${_id}`, {
     method: "DELETE",
-    headers: {
-      authorization: "e5e5de72-de46-4c51-be74-1878519f8c80",
-      "Content-Type": "application/json",
-    },
-  })
-    .then(handleResponse)
-    .catch((error) => {
-      console.error("Ошибка при удалении карточки:", error);
-      throw error;
-    });
+    headers: config.headers,
+  }).then(handleResponse);
 };
 
 export const likeCardOnServer = (_id, isActive) => {
-  return fetch(`https://nomoreparties.co/v1/wff-cohort-12/cards/likes/${_id}`, {
+  return fetch(`${config.baseUrl}/cards/likes/${_id}`, {
     method: isActive ? "DELETE" : "PUT",
+    headers: config.headers,
+  }).then(handleResponse);
+};
+
+export const getCards = () => {
+  return fetch("https://nomoreparties.co/v1/wff-cohort-12/cards ", {
+    method: "GET",
     headers: {
       authorization: "e5e5de72-de46-4c51-be74-1878519f8c80",
       "Content-Type": "application/json",
@@ -100,7 +77,6 @@ export const likeCardOnServer = (_id, isActive) => {
   })
     .then(handleResponse)
     .catch((error) => {
-      console.error("Ошибка при отправке запроса на лайк карточки:", error);
-      throw error;
+      console.error("Ошибка при получении данных:", error);
     });
 };

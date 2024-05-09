@@ -1,32 +1,29 @@
 import { hideError } from "./validation";
 
-//ФУНКЦИЯ ЗАКРЫТИЯ ПОПАПОВ
-export function closeModal(evt) {
-  evt.classList.remove("popup_is-opened");
+// Функция для закрытия попапа
+export function closeModal(popup) {
+  popup.classList.remove("popup_is-opened");
   removeEscapeEventListener();
 }
 
-// ФУНКЦИЯ ОТКРЫТИЯ ПОПАПОВ
+// Функция для открытия попапа
 export function openModal(popup) {
   popup.classList.add("popup_is-opened");
-  const formList = Array.from(document.querySelectorAll(".popup__form"));
-  formList.forEach((form) => {
-    const inputList = Array.from(form.querySelectorAll(".popup__input"));
-    inputList.forEach((input) => {
-      hideError(form, input);
-    });
+  const inputList = Array.from(popup.querySelectorAll(".popup__input"));
+  inputList.forEach((input) => {
+    hideError(popup, input);
   });
   addEscapeEventListener();
 }
 
-//ЗАКРЫТИЕ ВСЕХ ОКОН ПРИ КЛИКЕ НА ФОН
+// Функция для обработки клика вне попапа
 export function clickOutsideHandler(event) {
   if (event.target.classList.contains("popup")) {
     closeModal(event.target);
   }
 }
 
-//ЗАКРЫТИЕ ВСЕХ ОКОН ПРИ КЛИКЕ НА ESCAPE
+// Функция для обработки нажатия клавиши Escape
 export function keyClickClose(event) {
   if (event.key === "Escape") {
     const openedPopup = document.querySelector(".popup_is-opened");
