@@ -1,32 +1,28 @@
-export function delElement(element) {
-  element.remove();
-}
+import { deleteCardOnServer, likeCardOnServer } from "./api";
 
-const handleResponse = (response) => {
-  console.log(response);
-  return response.json();
+//Функция удаления карточки, обращение к серверу
+const deleteCard = (_id) => {
+  deleteCardOnServer(_id)
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.log("Удаление не удалось");
+    });
 };
 
-export function likeBtn(likeButton, _id) {
-  // Определяем, есть ли уже лайк на этой карточке
+export function delElement(element, _id) {
+  element.remove();
+  deleteCard(_id);
+}
 
+export function likeBtn(likeButton, _id) {
   const isActive = likeButton.classList.contains("card__like-button_is-active");
   // Меняем состояние лайка
   likeButton.classList.toggle("card__like-button_is-active");
 
-
-  // Отправляем запрос на сервер в зависимости от состояния лайка
-  fetch(`https://nomoreparties.co/v1/wff-cohort-12/cards/likes/${_id}`, {
-    method: isActive ? 'DELETE' : 'PUT',
-    headers: {
-      authorization: "e5e5de72-de46-4c51-be74-1878519f8c80",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      _id: _id,
-    }),
-  })
-    .then(handleResponse)
+  // Вызываем функцию отправки запроса на сервер
+  likeCardOnServer(_id, isActive)
     .then((data) => {
       console.log(data);
       const likesCount = likeButton.parentElement.querySelector(".card__likes");
@@ -34,9 +30,10 @@ export function likeBtn(likeButton, _id) {
       likesCount.textContent = data.likes.length;
     })
     .catch((error) => {
-      console.error("Error fetching data:", error);
+      // Обработка ошибок, если лайк не удалось установить или удалить
     });
 }
+
 export function createCard(
   nameValue,
   linkValue,
@@ -44,7 +41,8 @@ export function createCard(
   delHandler,
   openHandler,
   likes,
-  _id
+  _id,
+  isMine
 ) {
   const template = document.querySelector("#card-template").content;
   const cardElement = template.querySelector(".card").cloneNode(true);
@@ -60,13 +58,19 @@ export function createCard(
     likesCount.textContent = 0;
   }
 
+  if (isMine) {
+    deleteButton.style.display = "block"; // Показываем кнопку удаления
+  } else {
+    deleteButton.style.display = "none"; // Скрываем кнопку удаления
+  }
+
   // Добавляем слушатель события на кнопку лайка
   likeButton.addEventListener("click", () => {
     likeHandler(likeButton, _id);
   });
 
   // Добавляем слушатель события на кнопку удаления
-  deleteButton.addEventListener("click", () => delHandler(cardElement));
+  deleteButton.addEventListener("click", () => delHandler(cardElement, _id));
 
   // Добавляем слушатель события на изображение
   cardElement
