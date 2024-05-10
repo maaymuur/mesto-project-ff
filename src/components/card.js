@@ -4,7 +4,6 @@ const deleteCard = (_id) => {
   return deleteCardOnServer(_id)
     .then((data) => {
       console.log(data);
-      // Удаляем элемент из DOM только после успешного ответа от сервера
       element.remove();
     })
     .catch((error) => {
@@ -15,7 +14,6 @@ const deleteCard = (_id) => {
 export function delElement(element, _id) {
   deleteCard(_id)
     .then(() => {
-      // Этот код выполнится только после успешного удаления на сервере
       element.remove();
     });
 }
@@ -23,14 +21,14 @@ export function delElement(element, _id) {
 export function likeBtn(likeButton, _id) {
   const isActive = likeButton.classList.contains("card__like-button_is-active");
 
-  // Вызываем функцию отправки запроса на сервер
+  // Вызов функции отправки запроса на сервер
   likeCardOnServer(_id, isActive)
     .then((data) => {
       console.log(data);
       const likesCount = likeButton.parentElement.querySelector(".card__likes");
-      // Обновляем счетчик лайков
+      // Обновление счетчика лайков
       likesCount.textContent = data.likes.length;
-      // Переключаем класс активного состояния кнопки лайка
+      // Переключение состояния кнопки лайка
       likeButton.classList.toggle("card__like-button_is-active");
     })
     .catch((error) => {

@@ -1,4 +1,3 @@
-import { hideError } from "./validation";
 
 // Функция для закрытия попапа
 export function closeModal(popup) {

@@ -1,4 +1,3 @@
-// Импорт необходимых функций и стилей
 import {
   clickOutsideHandler,
   closeModal,
@@ -47,11 +46,11 @@ const profTitle = document.querySelector(".profile__title");
 const profDescr = document.querySelector(".profile__description");
 
 editBtn.addEventListener("click", () => {
-  // Вставляем данные в поля формы профиля
+  // Вставка данных в поля формы профиля
   nameInput.value = nameElement.textContent;
   descriptionInput.value = descriptionElement.textContent;
 
-  // Сбрасываем валидацию формы
+  // Сброс валидации формы
   const profileForm = document.querySelector(".popup_type_edit .popup__form");
   clearValidation(profileForm, {
     formSelector: ".popup__form",
@@ -62,10 +61,8 @@ editBtn.addEventListener("click", () => {
     errorClass: "form__input-error_active",
   });
 
-  // Открываем попап профиля
   openModal(editPopUp);
 });
-
 
 // Вызов функции для включения валидации форм
 enableValidation({
@@ -80,14 +77,6 @@ enableValidation({
 // Обработчик события для добавления новой карточки
 formCard.addEventListener("submit", (evt) => addCardNew(evt, placesList));
 
-// Обработчик события для открытия попапа с данными для редактирования
-document.addEventListener("click", function (event) {
-  if (event.target === editBtn) {
-    nameInput.value = nameElement.textContent;
-    descriptionInput.value = descriptionElement.textContent;
-  }
-});
-
 // Обработчики событий для открытия и закрытия попапов
 const popAddClose = document.querySelector(
   ".popup_type_new-card .popup__close"
@@ -97,7 +86,7 @@ addButton.addEventListener("click", () => {
   openModal(addCard);
   checkValidityAndToggleSubmitButton();
 });
-editBtn.addEventListener("click", () => openModal(editPopUp));
+
 popAddClose.addEventListener("click", () => closeModal(addCard));
 popEditClose.addEventListener("click", () => closeModal(editPopUp));
 document.addEventListener("click", clickOutsideHandler);
@@ -158,15 +147,15 @@ export function openCard(evt) {
 
 // Функция для проверки валидности данных в инпутах попапа
 function checkValidityAndToggleSubmitButton() {
-  // Получаем инпуты и кнопку сабмита
+  // Получение инпутов и кнопки сабмита
   const inputs = formCard.querySelectorAll(".popup__input");
   const submitButton = formCard.querySelector(".popup__button");
 
-  // Проверяем валидность каждого инпута и наличие пустых инпутов
+  // Проверка валидности каждого инпута и наличие пустых инпутов
   const isValid = Array.from(inputs).every((input) => input.validity.valid);
   const isEmpty = Array.from(inputs).some((input) => !input.value.trim());
 
-  // Активируем или деактивируем кнопку сабмита в зависимости от валидности данных и наличия пустых инпутов
+  // Активиция или наоборот кнопки сабмита в зависимости от валидности данных и наличия пустых инпутов
   if (isValid && !isEmpty) {
     submitButton.removeAttribute("disabled");
     submitButton.classList.remove("form__submit_inactive");
@@ -322,7 +311,7 @@ const fetchDataAndUpdate = () => {
       updateCards(cards); // Передача массива карточек и userId
     })
     .catch((error) => {
-      console.error("Ошибка при получении данных:", error); // Обработка ошибки в конце цепочки запроса
+      console.error("Ошибка при получении данных:", error); 
     });
 };
 fetchDataAndUpdate();

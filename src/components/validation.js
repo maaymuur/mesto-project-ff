@@ -25,7 +25,7 @@ export const isValid = (form, input, settings) => {
   if (!input.validity.valid) {
     showError(form, input, input.validationMessage, settings);
   } else {
-    hideError(form, input, settings); // Передаем параметр settings в hideError
+    hideError(form, input, settings); 
   }
 };
 
