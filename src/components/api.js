@@ -68,15 +68,9 @@ export const likeCardOnServer = (_id, isActive) => {
 };
 
 export const getCards = () => {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-12/cards ", {
+  return fetch(`${config.baseUrl}/cards`, {
     method: "GET",
-    headers: {
-      authorization: "e5e5de72-de46-4c51-be74-1878519f8c80",
-      "Content-Type": "application/json",
-    },
+    headers: config.headers,
   })
-    .then(handleResponse)
-    .catch((error) => {
-      console.error("Ошибка при получении данных:", error);
-    });
+    .then(handleResponse);
 };

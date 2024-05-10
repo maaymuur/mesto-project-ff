@@ -7,12 +7,13 @@ export const showError = (form, input, errorMes, settings) => {
 };
 
 //СКРЫТЬ ОШИБКУ
-export const hideError = (form, input) => {
+export const hideError = (form, input, settings) => {
   const formError = form.querySelector(`.${input.id}-error`);
-  input.classList.remove("form__input_type_error");
-  formError.classList.remove("form__input-error_active");
+  input.classList.remove(settings.inputErrorClass);
+  formError.classList.remove(settings.errorClass);
   formError.textContent = "";
 };
+
 
 //ПРОВЕРКА ВАЛИДНОСТИ ОШИБКИ
 export const isValid = (form, input, settings) => {
@@ -24,9 +25,10 @@ export const isValid = (form, input, settings) => {
   if (!input.validity.valid) {
     showError(form, input, input.validationMessage, settings);
   } else {
-    hideError(form, input);
+    hideError(form, input, settings); // Передаем параметр settings в hideError
   }
 };
+
 
 //ДОБАВЛЯЕМ ОШИБКУ КО ВСЕМ ПОЛЯМ ФОРМЫ
 export const setEventListeners = (

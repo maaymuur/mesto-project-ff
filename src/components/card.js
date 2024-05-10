@@ -1,7 +1,7 @@
 import { deleteCardOnServer, likeCardOnServer } from "./api";
 
 const deleteCard = (_id) => {
-  deleteCardOnServer(_id)
+  return deleteCardOnServer(_id)
     .then((data) => {
       console.log(data);
       // Удаляем элемент из DOM только после успешного ответа от сервера
@@ -13,8 +13,11 @@ const deleteCard = (_id) => {
 };
 
 export function delElement(element, _id) {
-  element.remove();
-  deleteCard(_id);
+  deleteCard(_id)
+    .then(() => {
+      // Этот код выполнится только после успешного удаления на сервере
+      element.remove();
+    });
 }
 
 export function likeBtn(likeButton, _id) {

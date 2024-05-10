@@ -36,19 +36,22 @@ const nameInput = document.querySelector(".popup__input_type_name");
 const descriptionInput = document.querySelector(
   ".popup__input_type_description"
 );
+const profImg = document.querySelector(".profile__image"); // Изображение профиля
+const popupUpdateAvatar = document.querySelector(".popup_type_update_avatar"); // Попап для обновления аватара
+const formUpdateAvatar = document.forms["update-avatar"]; // Форма для обновления аватара
+const inputUpdateAvatar = formUpdateAvatar.elements["link"]; // Поле ввода ссылки на аватар
+const avatarCloseModal = document.querySelector(
+  ".popup_type_update_avatar .popup__close"
+); // Кнопка закрытия попапа для обновления аватара
+const profTitle = document.querySelector(".profile__title");
+const profDescr = document.querySelector(".profile__description");
 
-// Вызов функции для включения валидации форм
-enableValidation({
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
-  inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__error_visible",
-});
+editBtn.addEventListener("click", () => {
+  // Вставляем данные в поля формы профиля
+  nameInput.value = nameElement.textContent;
+  descriptionInput.value = descriptionElement.textContent;
 
-// Вызов функции clearValidation при открытии формы профиля
-editBtn.addEventListener("click", function () {
+  // Сбрасываем валидацию формы
   const profileForm = document.querySelector(".popup_type_edit .popup__form");
   clearValidation(profileForm, {
     formSelector: ".popup__form",
@@ -58,6 +61,20 @@ editBtn.addEventListener("click", function () {
     inputErrorClass: "form__input_type_error",
     errorClass: "form__input-error_active",
   });
+
+  // Открываем попап профиля
+  openModal(editPopUp);
+});
+
+
+// Вызов функции для включения валидации форм
+enableValidation({
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
 });
 
 // Обработчик события для добавления новой карточки
@@ -76,7 +93,10 @@ const popAddClose = document.querySelector(
   ".popup_type_new-card .popup__close"
 );
 const popEditClose = document.querySelector(".popup_type_edit .popup__close");
-addButton.addEventListener("click", () => openModal(addCard));
+addButton.addEventListener("click", () => {
+  openModal(addCard);
+  checkValidityAndToggleSubmitButton();
+});
 editBtn.addEventListener("click", () => openModal(editPopUp));
 popAddClose.addEventListener("click", () => closeModal(addCard));
 popEditClose.addEventListener("click", () => closeModal(editPopUp));
@@ -126,13 +146,57 @@ function addCardNew(evt, placesList) {
 // Функция для открытия карточки
 export function openCard(evt) {
   const cardImg = evt.target;
-  const imgDesp =
-    cardImg.parentElement.querySelector(".card__title").textContent;
+  const cardTitleElement = cardImg
+    .closest(".card")
+    .querySelector(".card__title");
+  const imgDesp = cardTitleElement.textContent;
   popUpImg.src = cardImg.src;
   popUpImg.alt = imgDesp;
   popCaption.textContent = imgDesp;
   openModal(popImg);
 }
+
+// Функция для проверки валидности данных в инпутах попапа
+function checkValidityAndToggleSubmitButton() {
+  // Получаем инпуты и кнопку сабмита
+  const inputs = formCard.querySelectorAll(".popup__input");
+  const submitButton = formCard.querySelector(".popup__button");
+
+  // Проверяем валидность каждого инпута и наличие пустых инпутов
+  const isValid = Array.from(inputs).every((input) => input.validity.valid);
+  const isEmpty = Array.from(inputs).some((input) => !input.value.trim());
+
+  // Активируем или деактивируем кнопку сабмита в зависимости от валидности данных и наличия пустых инпутов
+  if (isValid && !isEmpty) {
+    submitButton.removeAttribute("disabled");
+    submitButton.classList.remove("form__submit_inactive");
+  } else {
+    submitButton.setAttribute("disabled", true);
+    submitButton.classList.add("form__submit_inactive");
+  }
+}
+
+function checkAvatarFormValidityAndToggleSubmitButton() {
+  const submitButton = formUpdateAvatar.querySelector(".popup__button");
+  const isEmpty = !inputUpdateAvatar.value.trim();
+
+  if (!isEmpty) {
+    submitButton.removeAttribute("disabled");
+    submitButton.classList.remove("form__submit_inactive");
+  } else {
+    submitButton.setAttribute("disabled", true);
+    submitButton.classList.add("form__submit_inactive");
+  }
+}
+
+// Вызов функции проверки валидности данных при открытии попапа
+addButton.addEventListener("click", () => {
+  openModal(addCard);
+  checkValidityAndToggleSubmitButton();
+});
+
+// Вызов функции проверки валидности данных при вводе пользователем
+formCard.addEventListener("input", checkValidityAndToggleSubmitButton);
 
 // Вызов функции для включения валидации форм
 enableValidation();
@@ -159,20 +223,12 @@ const updateCards = (cardsData) => {
   });
 };
 
-
-const profImg = document.querySelector(".profile__image"); // Изображение профиля
-const popupUpdateAvatar = document.querySelector(".popup_type_update_avatar"); // Попап для обновления аватара
-const formUpdateAvatar = document.forms["update-avatar"]; // Форма для обновления аватара
-const inputUpdateAvatar = formUpdateAvatar.elements["link"]; // Поле ввода ссылки на аватар
-const avatarCloseModal = document.querySelector(
-  ".popup_type_update_avatar .popup__close"
-); // Кнопка закрытия попапа для обновления аватара
-
 // Обработчик события для открытия попапа при клике на изображение профиля
 profImg.addEventListener("click", () => {
   profImg.classList.add("clicked");
   inputUpdateAvatar.value = "";
   openModal(popupUpdateAvatar);
+  checkAvatarFormValidityAndToggleSubmitButton();
 });
 
 // Обработчик события для удаления класса при уводе курсора с изображения профиля
@@ -184,6 +240,11 @@ avatarCloseModal.addEventListener("click", () => closeModal(popupUpdateAvatar));
 // Обработчик события для отправки формы обновления аватара
 formUpdateAvatar.addEventListener("submit", (evt) =>
   submitUpdateAvatar(evt, inputUpdateAvatar.value)
+);
+
+formUpdateAvatar.addEventListener(
+  "input",
+  checkAvatarFormValidityAndToggleSubmitButton
 );
 
 // Функция для отправки запроса на обновление аватара
@@ -212,17 +273,15 @@ function submitUpdateAvatar(evt, avatar) {
 const formProfleElement = document.querySelector(
   ".popup_type_edit  .popup__form"
 );
-const jobInput = document.querySelector(".popup__input_type_description"); 
-const avatarInput = document.querySelector(".popup__input_type_url"); 
+const jobInput = document.querySelector(".popup__input_type_description");
+const avatarInput = document.querySelector(".popup__input_type_url");
 
 // Обновляем информацию о пользователе
 export const updateUserInfo = (userData) => {
   const { name, about, avatar } = userData;
-  document.querySelector(".profile__title").textContent = name;
-  document.querySelector(".profile__description").textContent = about;
-  document.querySelector(".profile__image").style[
-    "background-image"
-  ] = `url("${avatar}")`;
+  profTitle.textContent = name;
+  profDescr.textContent = about;
+  profImg.style["background-image"] = `url("${avatar}")`;
 };
 
 // Обработчик события отправки формы редактирования профиля
@@ -260,10 +319,10 @@ const fetchDataAndUpdate = () => {
     .then(([userData, cards]) => {
       userId = userData._id; // Получение userID из данных о пользователе и присваиваивание
       updateUserInfo(userData);
-      updateCards(cards, userId); // Передача массива карточек и userId
+      updateCards(cards); // Передача массива карточек и userId
     })
     .catch((error) => {
-      console.error("Ошибка при получении данных:", error);
+      console.error("Ошибка при получении данных:", error); // Обработка ошибки в конце цепочки запроса
     });
 };
 fetchDataAndUpdate();

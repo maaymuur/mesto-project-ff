@@ -9,10 +9,6 @@ export function closeModal(popup) {
 // Функция для открытия попапа
 export function openModal(popup) {
   popup.classList.add("popup_is-opened");
-  const inputList = Array.from(popup.querySelectorAll(".popup__input"));
-  inputList.forEach((input) => {
-    hideError(popup, input);
-  });
   addEscapeEventListener();
 }
 
