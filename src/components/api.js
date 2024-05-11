@@ -14,7 +14,7 @@ export const handleResponse = (response) => {
   }
 };
 // Функция для добавления новой карточки
-export const newCard = (name, link) => {
+export const addNewCard = (name, link) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "POST",
     headers: config.headers,
@@ -71,6 +71,5 @@ export const getCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "GET",
     headers: config.headers,
-  })
-    .then(handleResponse);
+  }).then(handleResponse);
 };

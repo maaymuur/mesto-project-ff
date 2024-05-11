@@ -12,10 +12,9 @@ const deleteCard = (_id) => {
 };
 
 export function delElement(element, _id) {
-  deleteCard(_id)
-    .then(() => {
-      element.remove();
-    });
+  deleteCard(_id).then(() => {
+    element.remove();
+  });
 }
 
 export function likeBtn(likeButton, _id) {

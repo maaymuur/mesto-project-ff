@@ -14,9 +14,8 @@ export const hideError = (form, input, settings) => {
   formError.textContent = "";
 };
 
-
 //ПРОВЕРКА ВАЛИДНОСТИ ОШИБКИ
-export const isValid = (form, input, settings) => {
+export const validateInput = (form, input, settings) => {
   if (input.validity.patternMismatch) {
     input.setCustomValidity(input.dataset.errorMessage);
   } else {
@@ -25,10 +24,9 @@ export const isValid = (form, input, settings) => {
   if (!input.validity.valid) {
     showError(form, input, input.validationMessage, settings);
   } else {
-    hideError(form, input, settings); 
+    hideError(form, input, settings);
   }
 };
-
 
 //ДОБАВЛЯЕМ ОШИБКУ КО ВСЕМ ПОЛЯМ ФОРМЫ
 export const setEventListeners = (
@@ -46,7 +44,7 @@ export const setEventListeners = (
   toggleButtonState(inputList, buttonElement, inactiveButtonClass);
   inputList.forEach((input) => {
     input.addEventListener("input", () => {
-      isValid(form, input, { inputErrorClass, errorClass });
+      validateInput(form, input, { inputErrorClass, errorClass });
       toggleButtonState(inputList, buttonElement, inactiveButtonClass);
     });
   });
@@ -84,18 +82,22 @@ export const hasInvalidInput = (inputList) => {
 };
 
 //ПЕРЕКЛЮЧЕНИЕ КНОПКИ АКТИВНОСТИ
-export const toggleButtonState = (inputList, buttonElement) => {
+export const toggleButtonState = (
+  inputList,
+  buttonElement,
+  { inactiveButtonClass }
+) => {
   if (hasInvalidInput(inputList)) {
     buttonElement.disabled = true;
-    buttonElement.classList.add("form__submit_inactive");
+    buttonElement.classList.add(inactiveButtonClass);
   } else {
     buttonElement.disabled = false;
-    buttonElement.classList.remove("form__submit_inactive");
+    buttonElement.classList.remove(inactiveButtonClass);
   }
 };
 
- // Функция для очистки ошибок валидации и делает кнопку неактивной
- export function clearValidation(formElement, settings) {
+// Функция для очистки ошибок валидации и делает кнопку неактивной
+export function clearValidation(formElement, settings) {
   const inputList = Array.from(
     formElement.querySelectorAll(settings.inputSelector)
   );

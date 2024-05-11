@@ -1,5 +1,5 @@
 import {
-  clickOutsideHandler,
+  handleOutsideClick,
   closeModal,
   openModal,
 } from "./components/modal.js";
@@ -7,7 +7,7 @@ import "./index.css";
 import { enableValidation, clearValidation } from "./components/validation.js";
 import { createCard, likeBtn, delElement } from "./components/card.js";
 import {
-  newCard,
+  addNewCard,
   handleResponse,
   editProfile,
   updateAvatarOnServer,
@@ -82,14 +82,23 @@ const popAddClose = document.querySelector(
   ".popup_type_new-card .popup__close"
 );
 const popEditClose = document.querySelector(".popup_type_edit .popup__close");
+// Обработчик события нажатия кнопки "Добавить"
 addButton.addEventListener("click", () => {
   openModal(addCard);
-  checkValidityAndToggleSubmitButton();
+  clearValidation(formCard, {
+    formSelector: ".popup__form",
+    inputSelector: ".popup__input",
+    submitButtonSelector: ".popup__button",
+    inactiveButtonClass: "popup__button_disabled",
+    inputErrorClass: "popup__input_type_error",
+    errorClass: "popup__error_visible",
+  });
+  validateAndToggleSubmitButton();
 });
 
 popAddClose.addEventListener("click", () => closeModal(addCard));
 popEditClose.addEventListener("click", () => closeModal(editPopUp));
-document.addEventListener("click", clickOutsideHandler);
+document.addEventListener("click", handleOutsideClick);
 
 // Обработчик события для закрытия попапа с изображением
 const imgClose = document.querySelector(".popup_type_image .popup__close");
@@ -104,7 +113,7 @@ function addCardNew(evt, placesList) {
   const saveButton = formCard.querySelector(".popup__button");
   saveButton.textContent = "Создание...";
 
-  newCard(nameInputCard.value, descInputCard.value)
+  addNewCard(nameInputCard.value, descInputCard.value)
     .then((data) => {
       const newCardElement = createCard(
         nameInputCard.value,
@@ -146,17 +155,19 @@ export function openCard(evt) {
 }
 
 // Функция для проверки валидности данных в инпутах попапа
-function checkValidityAndToggleSubmitButton() {
+function validateAndToggleSubmitButton() {
   // Получение инпутов и кнопки сабмита
   const inputs = formCard.querySelectorAll(".popup__input");
   const submitButton = formCard.querySelector(".popup__button");
 
   // Проверка валидности каждого инпута и наличие пустых инпутов
-  const isValid = Array.from(inputs).every((input) => input.validity.valid);
+  const validateInput = Array.from(inputs).every(
+    (input) => input.validity.valid
+  );
   const isEmpty = Array.from(inputs).some((input) => !input.value.trim());
 
   // Активиция или наоборот кнопки сабмита в зависимости от валидности данных и наличия пустых инпутов
-  if (isValid && !isEmpty) {
+  if (validateInput && !isEmpty) {
     submitButton.removeAttribute("disabled");
     submitButton.classList.remove("form__submit_inactive");
   } else {
@@ -165,7 +176,7 @@ function checkValidityAndToggleSubmitButton() {
   }
 }
 
-function checkAvatarFormValidityAndToggleSubmitButton() {
+function validateAvatarFormAndToggleSubmitButton() {
   const submitButton = formUpdateAvatar.querySelector(".popup__button");
   const isEmpty = !inputUpdateAvatar.value.trim();
 
@@ -181,11 +192,18 @@ function checkAvatarFormValidityAndToggleSubmitButton() {
 // Вызов функции проверки валидности данных при открытии попапа
 addButton.addEventListener("click", () => {
   openModal(addCard);
-  checkValidityAndToggleSubmitButton();
+  clearValidation(formCard, {
+    formSelector: ".popup__form",
+    inputSelector: ".popup__input",
+    submitButtonSelector: ".popup__button",
+    inactiveButtonClass: "popup__button_disabled",
+    inputErrorClass: "popup__input_type_error",
+    errorClass: "popup__error_visible",
+  });
 });
 
 // Вызов функции проверки валидности данных при вводе пользователем
-formCard.addEventListener("input", checkValidityAndToggleSubmitButton);
+formCard.addEventListener("input", validateAndToggleSubmitButton);
 
 // Вызов функции для включения валидации форм
 enableValidation();
@@ -217,7 +235,7 @@ profImg.addEventListener("click", () => {
   profImg.classList.add("clicked");
   inputUpdateAvatar.value = "";
   openModal(popupUpdateAvatar);
-  checkAvatarFormValidityAndToggleSubmitButton();
+  validateAvatarFormAndToggleSubmitButton();
 });
 
 // Обработчик события для удаления класса при уводе курсора с изображения профиля
@@ -228,16 +246,16 @@ avatarCloseModal.addEventListener("click", () => closeModal(popupUpdateAvatar));
 
 // Обработчик события для отправки формы обновления аватара
 formUpdateAvatar.addEventListener("submit", (evt) =>
-  submitUpdateAvatar(evt, inputUpdateAvatar.value)
+  updateAvatar(evt, inputUpdateAvatar.value)
 );
 
 formUpdateAvatar.addEventListener(
   "input",
-  checkAvatarFormValidityAndToggleSubmitButton
+  validateAvatarFormAndToggleSubmitButton
 );
 
 // Функция для отправки запроса на обновление аватара
-function submitUpdateAvatar(evt, avatar) {
+function updateAvatar(evt, avatar) {
   evt.preventDefault();
   const saveButton = formUpdateAvatar.querySelector(".popup__button");
   saveButton.textContent = "Сохранение...";
@@ -274,7 +292,7 @@ export const updateUserInfo = (userData) => {
 };
 
 // Обработчик события отправки формы редактирования профиля
-function handleFormProfileSubmit(evt) {
+function submitProfileForm(evt) {
   evt.preventDefault();
 
   // Получаем значения из формы
@@ -301,9 +319,9 @@ function handleFormProfileSubmit(evt) {
     });
 }
 
-formProfleElement.addEventListener("submit", handleFormProfileSubmit);
+formProfleElement.addEventListener("submit", submitProfileForm);
 
-const fetchDataAndUpdate = () => {
+const updateData = () => {
   Promise.all([getData(), getCards()])
     .then(([userData, cards]) => {
       userId = userData._id; // Получение userID из данных о пользователе и присваиваивание
@@ -311,7 +329,7 @@ const fetchDataAndUpdate = () => {
       updateCards(cards); // Передача массива карточек и userId
     })
     .catch((error) => {
-      console.error("Ошибка при получении данных:", error); 
+      console.error("Ошибка при получении данных:", error);
     });
 };
-fetchDataAndUpdate();
+updateData();

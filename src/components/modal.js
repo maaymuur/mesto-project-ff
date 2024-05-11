@@ -1,4 +1,3 @@
-
 // Функция для закрытия попапа
 export function closeModal(popup) {
   popup.classList.remove("popup_is-opened");
@@ -12,14 +11,14 @@ export function openModal(popup) {
 }
 
 // Функция для обработки клика вне попапа
-export function clickOutsideHandler(event) {
+export function handleOutsideClick(event) {
   if (event.target.classList.contains("popup")) {
     closeModal(event.target);
   }
 }
 
 // Функция для обработки нажатия клавиши Escape
-export function keyClickClose(event) {
+export function closeOnEscapeKey(event) {
   if (event.key === "Escape") {
     const openedPopup = document.querySelector(".popup_is-opened");
     closeModal(openedPopup);
@@ -28,11 +27,10 @@ export function keyClickClose(event) {
 
 // Функция для добавления обработчика события закрытия по нажатию на Escape
 export function addEscapeEventListener() {
-  document.addEventListener("keydown", keyClickClose);
+  document.addEventListener("keydown", closeOnEscapeKey);
 }
 
 // Функция для удаления обработчика события закрытия по нажатию на Escape
 export function removeEscapeEventListener() {
-  document.removeEventListener("keydown", keyClickClose);
+  document.removeEventListener("keydown", closeOnEscapeKey);
 }
-
